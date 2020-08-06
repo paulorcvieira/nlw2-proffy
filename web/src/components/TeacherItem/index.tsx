@@ -1,35 +1,59 @@
 import React from 'react'
-
-import './styles.css'
+import api from '../../services/api'
 
 import whatsappIcon from '../../assets/images/icons/whatsapp.svg'
 
-function TeacherItem() {
+import './styles.css'
+
+export interface Teacher {
+  id: number;
+  avatar: string;
+  bio: string;
+  cost: number;
+  name: string
+  subject: string;
+  whatsapp: string;
+}
+
+interface TeacherItemProps {
+  teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({ teacher }) => {
+  function handleCreateNewConnetion() {
+    api.post('connections', { user_id: teacher.id })
+  }
+
   return (
     <article className="teacher-item">
       <header>
-        <img src="https://avatars0.githubusercontent.com/u/20549869?s=400&u=9246673b152fc44b412d965429b208d4928c9306&v=4" alt="Paulo Vieira"/>
+        <img src={teacher.avatar} alt={teacher.name}/>
         <div>
-          <strong>Paulo Vieira</strong>
-          <span>Direito Processual Penal</span>
+          <strong>{teacher.name}</strong>
+          <span>{teacher.subject}</span>
         </div>
       </header>
 
-      <p>
-        Entusiasta das melhores tecnologias.
-        <br /><br />
-        Apaixonado por direito penal e processual penal e por contribuir com a sociedade através de conteúdos inteligentes.
-      </p>
+      <p>{teacher.bio}</p>
 
       <footer>
         <p>
           Preço/Hora
-          <strong>R$ 200,00</strong>
+          <strong>R$ {teacher.cost}</strong>
         </p>
-          <button type="button">
+          <a href={`https://wa.me/${teacher.whatsapp}?text=${encodeURI(
+            `Olá ${teacher.name}!,
+            gostaria de saber mais sobre as aulas de ${teacher.subject},
+            poderia confirmar a disponibilidade de horários e dias?
+            Aguardo um retorno!`
+          )}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleCreateNewConnetion}
+          >
             <img src={whatsappIcon} alt="Whatsapp" />
             Entrar em contato
-          </button>
+          </a>
       </footer>
     </article>
   )
